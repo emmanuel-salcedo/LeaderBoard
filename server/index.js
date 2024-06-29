@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors'); // Import the CORS middleware
 const { sequelize } = require('./models');
 const leagueRoutes = require('./routes/leagues');
 const churchRoutes = require('./routes/churches');
@@ -7,6 +8,7 @@ const pointRoutes = require('./routes/points');
 
 const app = express();
 
+app.use(cors()); // Enable CORS for all routes
 app.use(express.json());
 
 // API routes
