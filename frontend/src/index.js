@@ -1,17 +1,27 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+function Leaderboard() {
+  const [data, setData] = useState([]);
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  useEffect(() => {
+    fetch('https://your-backend-url/leaderboard')
+      .then(response => response.json())
+      .then(data => setData(data));
+  }, []);
+
+  return (
+    <div>
+      {data.map(church => (
+        <div key={church.id}>
+          <h2>{church.name}</h2>
+          <p>Points: {church.points}</p>
+          <p>League: {church.league}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+ReactDOM.render(<Leaderboard />, document.getElementById('root'));
