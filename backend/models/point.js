@@ -1,16 +1,26 @@
-const { Model, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../database');
+const Church = require('./church');
 
-class Point extends Model {
-  static init(sequelize) {
-    super.init({
-      description: DataTypes.STRING,
-      value: DataTypes.INTEGER,
-    }, { sequelize, modelName: 'Point' });
+const Point = sequelize.define('Point', {
+  description: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  points: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  ChurchId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Church,
+      key: 'id'
+    }
   }
+});
 
-  static associate(models) {
-    this.belongsTo(models.Church, { foreignKey: 'churchId', as: 'church' });
-  }
-}
+Church.hasMany(Point, { foreignKey: 'ChurchId' });
+Point.belongsTo(Church, { foreignKey: 'ChurchId' });
 
 module.exports = Point;

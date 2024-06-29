@@ -1,17 +1,26 @@
-const { Model, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../database');
+const League = require('./league');
 
-class Church extends Model {
-  static init(sequelize) {
-    super.init({
-      name: DataTypes.STRING,
-      location: DataTypes.STRING,
-    }, { sequelize, modelName: 'Church' });
+const Church = sequelize.define('Church', {
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false
+  },
+  totalPoints: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
+  LeagueId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: League,
+      key: 'id'
+    }
   }
+});
 
-  static associate(models) {
-    this.belongsTo(models.League, { foreignKey: 'leagueId', as: 'league' });
-    this.hasMany(models.Point, { foreignKey: 'churchId', as: 'points' });
-  }
-}
+League.hasMany(Church, { foreignKey: 'LeagueId' });
+Church.belongsTo(League, { foreignKey: 'LeagueId' });
 
 module.exports = Church;
