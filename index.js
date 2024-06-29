@@ -7,9 +7,15 @@ const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 
-// Database setup
+// Database setup with SSL
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false // You might want to handle this more securely in production
+    }
+  },
 });
 
 // Define the Leaderboard model
