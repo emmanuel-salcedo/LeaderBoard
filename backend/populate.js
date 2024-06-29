@@ -1,52 +1,35 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { League, Church, Point } = require('./models');
 
-// Database setup
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: 'postgres',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false
-    }
-  },
-});
+async function populateData() {
+  await League.sync({ force: true });
+  await Church.sync({ force: true });
+  await Point.sync({ force: true });
 
-// Define the Leaderboard model
-const Leaderboard = sequelize.define('Leaderboard', {
-  church: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  points: {
-    type: DataTypes.INTEGER,
-    allowNull: false,
-  },
-  league: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
+  const league1 = await League.create({ name: 'League 1' });
+  const league2 = await League.create({ name: 'League 2' });
 
-// Sample data
-const sampleData = [
-  { church: 'Church A', points: 10, league: 'League 1' },
-  { church: 'Church B', points: 20, league: 'League 1' },
-  { church: 'Church C', points: 30, league: 'League 2' },
-  { church: 'Church D', points: 40, league: 'League 2' },
-  { church: 'Church E', points: 50, league: 'League 3' },
-];
+  const churchA = await Church.create({ name: 'Church A', leagueId: league1.id, totalPoints: 0 });
+  const churchB = await Church.create({ name: 'Church B', leagueId: league1.id, totalPoints: 0 });
+  const churchC = await Church.create({ name: 'Church C', leagueId: league2.id, totalPoints: 0 });
+  const churchD = await Church.create({ name: 'Church D', leagueId: league2.id, totalPoints: 0 });
 
-// Function to populate the database
-const populateDatabase = async () => {
-  try {
-    await sequelize.sync({ force: true }); // Drops and recreates the table
-    await Leaderboard.bulkCreate(sampleData);
-    console.log('Database populated with sample data');
-    process.exit();
-  } catch (error) {
-    console.error('Error populating database:', error);
-    process.exit(1);
+  await Point.create({ description: 'Service Event', points: 10, churchId: churchA.id });
+  await Point.create({ description: 'Fundraiser', points: 15, churchId: churchA.id });
+  await Point.create({ description: 'Community Outreach', points: 20, churchId: churchB.id });
+  await Point.create({ description: 'Charity Drive', points: 25, churchId: churchC.id });
+  await Point.create({ description: 'Volunteer Work', points: 30, churchId: churchD.id });
+
+  // Update totalPoints for each church
+  const churches = [churchA, churchB, churchC, churchD];
+  for (const church of churches) {
+    const points = await Point.sum('points', { where: { churchId: church.id } });
+    church.totalPoints = points;
+    await church.save();
   }
-};
 
-populateDatabase();
+  console.log('Test data populated successfully!');
+}
+
+populateData().catch(error => {
+  console.error('Error populating test data:', error);
+});
