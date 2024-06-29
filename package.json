@@ -1,6 +1,8 @@
 {
   "name": "leaderboard-app",
   "version": "1.0.0",
+  "description": "A simple leaderboard application",
+  "main": "backend/index.js",
   "scripts": {
     "start": "node backend/index.js"
   },
