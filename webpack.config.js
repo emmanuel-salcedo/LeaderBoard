@@ -6,9 +6,9 @@ module.exports = {
       "querystring": require.resolve("querystring-es3"),
     },
   },
-  entry: './src/index.js',
+  entry: './client/src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'client/build'),
     filename: 'bundle.js',
   },
   module: {

@@ -12,8 +12,10 @@
     "express": "^4.17.1",
     "pg": "^8.7.1",
     "pg-hstore": "^2.3.4",
-    "querystring-es3": "^0.2.1",
-    "react-router-dom": "^6.24.0",
     "sequelize": "^6.6.5"
+  },
+  "engines": {
+    "node": "20.x",
+    "npm": "10.x"
   }
 }
