@@ -1,16 +1,15 @@
 {
   "name": "leaderboard-app",
   "version": "1.0.0",
-  "main": "backend/models/index.js",
   "scripts": {
-    "start": "node backend/models/index.js",
+    "start": "node backend/index.js",
     "populate": "node backend/populate.js"
   },
   "dependencies": {
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "pg": "^8.12.0",
-    "sequelize": "^6.37.3"
+    "express": "^4.17.1",
+    "sequelize": "^6.6.5",
+    "pg": "^8.7.1",
+    "pg-hstore": "^2.3.4",
+    "cors": "^2.8.5"
   }
 }
