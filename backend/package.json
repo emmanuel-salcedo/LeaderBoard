@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "scripts": {
     "start": "node backend/index.js",
-    "populate": "node backend/populate.js"
   },
   "dependencies": {
     "express": "^4.17.1",
