@@ -1,21 +1,17 @@
-module.exports = (sequelize, DataTypes) => {
-  const Church = sequelize.define('Church', {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    totalPoints: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-  }, {
-    timestamps: true,
-  });
+const { Model, DataTypes } = require('sequelize');
 
-  Church.associate = (models) => {
-    Church.belongsTo(models.League);
-    Church.hasMany(models.Point, { onDelete: 'SET NULL' });
-  };
+class Church extends Model {
+  static init(sequelize) {
+    super.init({
+      name: DataTypes.STRING,
+      location: DataTypes.STRING,
+    }, { sequelize, modelName: 'Church' });
+  }
 
-  return Church;
-};
+  static associate(models) {
+    this.belongsTo(models.League, { foreignKey: 'leagueId', as: 'league' });
+    this.hasMany(models.Point, { foreignKey: 'churchId', as: 'points' });
+  }
+}
+
+module.exports = Church;

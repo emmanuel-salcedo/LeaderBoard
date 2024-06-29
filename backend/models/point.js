@@ -1,20 +1,16 @@
-module.exports = (sequelize, DataTypes) => {
-  const Point = sequelize.define('Point', {
-    description: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    points: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-  }, {
-    timestamps: true,
-  });
+const { Model, DataTypes } = require('sequelize');
 
-  Point.associate = (models) => {
-    Point.belongsTo(models.Church);
-  };
+class Point extends Model {
+  static init(sequelize) {
+    super.init({
+      description: DataTypes.STRING,
+      value: DataTypes.INTEGER,
+    }, { sequelize, modelName: 'Point' });
+  }
 
-  return Point;
-};
+  static associate(models) {
+    this.belongsTo(models.Church, { foreignKey: 'churchId', as: 'church' });
+  }
+}
+
+module.exports = Point;

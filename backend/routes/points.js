@@ -23,16 +23,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get all points for a church
-router.get('/church/:churchId', async (req, res) => {
-  try {
-    const points = await Point.findAll({ where: { ChurchId: req.params.churchId } });
-    res.status(200).json(points);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Get a single point by ID
 router.get('/:id', async (req, res) => {
   try {

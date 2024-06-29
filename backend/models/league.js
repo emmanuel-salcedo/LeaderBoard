@@ -1,16 +1,16 @@
-module.exports = (sequelize, DataTypes) => {
-  const League = sequelize.define('League', {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  }, {
-    timestamps: true,
-  });
+const { Model, DataTypes } = require('sequelize');
 
-  League.associate = (models) => {
-    League.hasMany(models.Church, { onDelete: 'SET NULL' });
-  };
+class League extends Model {
+  static init(sequelize) {
+    super.init({
+      name: DataTypes.STRING,
+      description: DataTypes.STRING,
+    }, { sequelize, modelName: 'League' });
+  }
 
-  return League;
-};
+  static associate(models) {
+    this.hasMany(models.Church, { foreignKey: 'leagueId', as: 'churches' });
+  }
+}
+
+module.exports = League;

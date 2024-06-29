@@ -23,16 +23,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Get all churches for a league
-router.get('/league/:leagueId', async (req, res) => {
-  try {
-    const churches = await Church.findAll({ where: { LeagueId: req.params.leagueId } });
-    res.status(200).json(churches);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // Get a single church by ID
 router.get('/:id', async (req, res) => {
   try {
