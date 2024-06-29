@@ -1,20 +1,26 @@
-const Sequelize = require('sequelize');
-const sequelize = require('../../config/database'); // Corrected path
-
+// backend/models/index.js
+const sequelize = require('../../config/database');
 const League = require('./league');
 const Church = require('./church');
 const Point = require('./point');
 
-League.init(sequelize);
-Church.init(sequelize);
-Point.init(sequelize);
+// Associations
+League.hasMany(Church, { foreignKey: 'LeagueId' });
+Church.belongsTo(League, { foreignKey: 'LeagueId' });
+Church.hasMany(Point, { foreignKey: 'ChurchId' });
+Point.belongsTo(Church, { foreignKey: 'ChurchId' });
 
-League.associate({ Church });
-Church.associate({ League, Point });
+// Sync the models
+async function syncDatabase() {
+    await sequelize.sync({ force: true });  // Change 'force' to false in production
+    console.log('Database synced!');
+}
+
+syncDatabase();
 
 module.exports = {
-  sequelize,
-  League,
-  Church,
-  Point
+    sequelize,
+    League,
+    Church,
+    Point
 };
