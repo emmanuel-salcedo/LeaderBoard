@@ -1,4 +1,3 @@
-
 const express = require('express');
 const { League, Church } = require('../models');
 

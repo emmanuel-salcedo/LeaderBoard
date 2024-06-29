@@ -1,22 +1,23 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://user:pass@localhost:5432/leaderboard', {
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
   protocol: 'postgres',
-  logging: false
+  logging: false, // Disable logging or set to console.log for debugging
 });
 
-const League = require('./league')(sequelize, DataTypes);
-const Church = require('./church')(sequelize, DataTypes);
-const Point = require('./point')(sequelize, DataTypes);
+const db = {};
 
-League.hasMany(Church, { onDelete: 'SET NULL' });
-Church.belongsTo(League);
-Church.hasMany(Point, { onDelete: 'SET NULL' });
-Point.belongsTo(Church);
+db.Sequelize = Sequelize;
+db.sequelize = sequelize;
 
-module.exports = {
-  sequelize,
-  League,
-  Church,
-  Point
-};
+db.League = require('./league')(sequelize, DataTypes);
+db.Church = require('./church')(sequelize, DataTypes);
+db.Point = require('./point')(sequelize, DataTypes);
+
+Object.keys(db).forEach(modelName => {
+  if (db[modelName].associate) {
+    db[modelName].associate(db);
+  }
+});
+
+module.exports = db;

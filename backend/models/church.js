@@ -1,14 +1,21 @@
-  // models/church.js
-  module.exports = (sequelize, DataTypes) => {
-    const Church = sequelize.define('Church', {
-      name: DataTypes.STRING,
-      totalPoints: DataTypes.INTEGER
-    });
-    Church.associate = function(models) {
-      Church.belongsTo(models.League, { foreignKey: 'leagueId' });
-      Church.hasMany(models.Point, { foreignKey: 'churchId' });
-    };
-    return Church;
+module.exports = (sequelize, DataTypes) => {
+  const Church = sequelize.define('Church', {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    totalPoints: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+  }, {
+    timestamps: true,
+  });
+
+  Church.associate = (models) => {
+    Church.belongsTo(models.League);
+    Church.hasMany(models.Point, { onDelete: 'SET NULL' });
   };
-  
-  
+
+  return Church;
+};

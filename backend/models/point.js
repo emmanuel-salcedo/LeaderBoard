@@ -1,12 +1,20 @@
-// models/point.js
 module.exports = (sequelize, DataTypes) => {
-    const Point = sequelize.define('Point', {
-      description: DataTypes.STRING,
-      points: DataTypes.INTEGER
-    });
-    Point.associate = function(models) {
-      Point.belongsTo(models.Church, { foreignKey: 'churchId' });
-    };
-    return Point;
+  const Point = sequelize.define('Point', {
+    description: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    points: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+  }, {
+    timestamps: true,
+  });
+
+  Point.associate = (models) => {
+    Point.belongsTo(models.Church);
   };
-  
+
+  return Point;
+};
