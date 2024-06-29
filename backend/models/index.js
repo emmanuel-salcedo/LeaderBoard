@@ -1,30 +1,22 @@
 const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
+const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://user:pass@localhost:5432/leaderboard', {
   dialect: 'postgres',
   protocol: 'postgres',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false
-    }
-  }
+  logging: false
 });
 
 const League = require('./league')(sequelize, DataTypes);
 const Church = require('./church')(sequelize, DataTypes);
 const Point = require('./point')(sequelize, DataTypes);
 
-League.hasMany(Church, { as: 'churches' });
+League.hasMany(Church, { onDelete: 'SET NULL' });
 Church.belongsTo(League);
-Church.hasMany(Point, { as: 'points' });
+Church.hasMany(Point, { onDelete: 'SET NULL' });
 Point.belongsTo(Church);
 
-const models = {
+module.exports = {
+  sequelize,
   League,
   Church,
-  Point,
-  sequelize,
-  Sequelize
+  Point
 };
-
-module.exports = models;
