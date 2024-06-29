@@ -2,7 +2,7 @@
   "name": "leaderboard-app",
   "version": "1.0.0",
   "scripts": {
-    "start": "node backend/index.js",
+    "start": "node backend/index.js"
   },
   "dependencies": {
     "express": "^4.17.1",
