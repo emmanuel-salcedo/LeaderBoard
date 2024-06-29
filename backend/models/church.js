@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../database');
+const sequelize = require('../../config/database'); // Corrected path
 const League = require('./league');
 
 const Church = sequelize.define('Church', {
