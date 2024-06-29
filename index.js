@@ -8,7 +8,7 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 // Database setup
-const sequelize = new Sequelize(process.env.DATABASE_URL || 'postgres://username:password@localhost:5432/leaderboard', {
+const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
 });
 
