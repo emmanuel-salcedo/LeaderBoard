@@ -1,35 +1,34 @@
-const { League, Church, Point } = require('./models');
+const { League, Church, Point, sequelize } = require('./models');
 
 async function populateData() {
-  await League.sync({ force: true });
-  await Church.sync({ force: true });
-  await Point.sync({ force: true });
+  try {
+    await sequelize.sync({ force: true });
 
-  const league1 = await League.create({ name: 'League 1' });
-  const league2 = await League.create({ name: 'League 2' });
+    const league1 = await League.create({ name: 'League 1' });
+    const league2 = await League.create({ name: 'League 2' });
 
-  const churchA = await Church.create({ name: 'Church A', leagueId: league1.id, totalPoints: 0 });
-  const churchB = await Church.create({ name: 'Church B', leagueId: league1.id, totalPoints: 0 });
-  const churchC = await Church.create({ name: 'Church C', leagueId: league2.id, totalPoints: 0 });
-  const churchD = await Church.create({ name: 'Church D', leagueId: league2.id, totalPoints: 0 });
+    const church1 = await Church.create({ name: 'Church 1', LeagueId: league1.id });
+    const church2 = await Church.create({ name: 'Church 2', LeagueId: league1.id });
+    const church3 = await Church.create({ name: 'Church 3', LeagueId: league2.id });
+    const church4 = await Church.create({ name: 'Church 4', LeagueId: league2.id });
 
-  await Point.create({ description: 'Service Event', points: 10, churchId: churchA.id });
-  await Point.create({ description: 'Fundraiser', points: 15, churchId: churchA.id });
-  await Point.create({ description: 'Community Outreach', points: 20, churchId: churchB.id });
-  await Point.create({ description: 'Charity Drive', points: 25, churchId: churchC.id });
-  await Point.create({ description: 'Volunteer Work', points: 30, churchId: churchD.id });
+    await Point.create({ description: 'Won a competition', points: 10, ChurchId: church1.id });
+    await Point.create({ description: 'Community service', points: 5, ChurchId: church1.id });
+    await Point.create({ description: 'Fundraising event', points: 20, ChurchId: church2.id });
+    await Point.create({ description: 'Helping the homeless', points: 15, ChurchId: church2.id });
+    await Point.create({ description: 'Community service', points: 25, ChurchId: church3.id });
 
-  // Update totalPoints for each church
-  const churches = [churchA, churchB, churchC, churchD];
-  for (const church of churches) {
-    const points = await Point.sum('points', { where: { churchId: church.id } });
-    church.totalPoints = points;
-    await church.save();
+    const churches = await Church.findAll();
+    for (const church of churches) {
+      const totalPoints = await Point.sum('points', { where: { ChurchId: church.id } });
+      church.totalPoints = totalPoints;
+      await church.save();
+    }
+
+    console.log('Database populated successfully!');
+  } catch (error) {
+    console.error('Error populating test data:', error);
   }
-
-  console.log('Test data populated successfully!');
 }
 
-populateData().catch(error => {
-  console.error('Error populating test data:', error);
-});
+populateData();

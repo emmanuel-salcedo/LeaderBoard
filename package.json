@@ -1,9 +1,9 @@
 {
   "name": "leaderboard-app",
   "version": "1.0.0",
-  "main": "backend/index.js",
+  "main": "backend/models/index.js",
   "scripts": {
-    "start": "node backend/index.js",
+    "start": "node backend/models/index.js",
     "populate": "node backend/populate.js"
   },
   "dependencies": {
