@@ -13,7 +13,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialectOptions: {
     ssl: {
       require: true,
-      rejectUnauthorized: false // You might want to handle this more securely in production
+      rejectUnauthorized: false
     }
   },
 });
@@ -28,6 +28,10 @@ const Leaderboard = sequelize.define('Leaderboard', {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  league: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
 // Sync the database
@@ -40,17 +44,18 @@ app.get('/leaderboard', async (req, res) => {
 });
 
 app.post('/leaderboard', async (req, res) => {
-  const { church, points } = req.body;
-  const newEntry = await Leaderboard.create({ church, points });
+  const { church, points, league } = req.body;
+  const newEntry = await Leaderboard.create({ church, points, league });
   res.json(newEntry);
 });
 
 app.put('/leaderboard/:id', async (req, res) => {
   const { id } = req.params;
-  const { points } = req.body;
+  const { points, league } = req.body;
   const entry = await Leaderboard.findByPk(id);
   if (entry) {
     entry.points = points;
+    entry.league = league;
     await entry.save();
     res.json(entry);
   } else {
