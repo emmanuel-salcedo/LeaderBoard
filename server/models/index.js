@@ -1,4 +1,5 @@
 const sequelize = require('../config/database');
+const Sequelize = require('sequelize');
 
 const models = {
   League: require('./league'),
