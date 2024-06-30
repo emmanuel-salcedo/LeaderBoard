@@ -1,3 +1,4 @@
+//server/routes/churches.js
 const express = require('express');
 const { Church, Point, League } = require('../models');
 const router = express.Router();

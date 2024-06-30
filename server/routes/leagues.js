@@ -1,4 +1,4 @@
-//Leagues.js
+//server/routes/leagues.js
 const express = require('express');
 const { League, Church } = require('../models');
 const router = express.Router();
