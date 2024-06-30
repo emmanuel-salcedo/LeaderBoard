@@ -13,11 +13,6 @@ const updateTotalPoints = async (churchId) => {
 router.post('/', async (req, res) => {
   try {
     const church = await Church.create(req.body);
-
-    // Create random points for testing
-    for (let i = 0; i < 10; i++) {
-      await Point.create({ description: `Random Point ${i + 1}`, date: new Date(), points: Math.floor(Math.random() * 100), ChurchId: church.id });
-    }
     
     // Update the total points for the church
     await updateTotalPoints(church.id);
