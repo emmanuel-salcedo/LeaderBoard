@@ -14,6 +14,15 @@ router.post('/', async (req, res) => {
   try {
     const church = await Church.create(req.body);
     
+    const initialPoint = {
+      description: 'Initial Point',
+      date: new Date(),
+      points: 100, // or any default value you want to set
+      ChurchId: church.id,
+    };
+    await Point.create(initialPoint);
+
+    
     // Update the total points for the church
     await updateTotalPoints(church.id);
 
