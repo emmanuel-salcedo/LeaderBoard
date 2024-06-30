@@ -1,15 +1,25 @@
-// backend/routes/points.js
 const express = require('express');
+const { Point, Church } = require('../models');
 const router = express.Router();
-const { Point } = require('../models');
 
-// Create a point
+// Middleware to update total points
+const updateTotalPoints = async (churchId) => {
+  const points = await Point.sum('points', { where: { ChurchId: churchId } });
+  await Church.update({ totalPoints: points }, { where: { id: churchId } });
+};
+
+// Create a new point
 router.post('/', async (req, res) => {
   try {
-    const point = await Point.create(req.body);
+    const { description, date, points, ChurchId } = req.body;
+    if (!description || !date || !points || !ChurchId) {
+      return res.status(400).json({ error: 'Description, date, points, and ChurchId are required' });
+    }
+    const point = await Point.create({ description, date, points, ChurchId });
+    await updateTotalPoints(ChurchId);
     res.status(201).json(point);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -20,8 +30,26 @@ router.delete('/:id', async (req, res) => {
     if (!point) {
       return res.status(404).json({ error: 'Point not found' });
     }
+    const ChurchId = point.ChurchId;
     await point.destroy();
-    res.status(204).end();
+    await updateTotalPoints(ChurchId);
+    res.status(204).json({ message: 'Point deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update a point
+router.put('/:id', async (req, res) => {
+  try {
+    const point = await Point.findByPk(req.params.id);
+    if (!point) {
+      return res.status(404).json({ error: 'Point not found' });
+    }
+    const { description, date, points } = req.body;
+    await point.update({ description, date, points });
+    await updateTotalPoints(point.ChurchId);
+    res.json(point);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

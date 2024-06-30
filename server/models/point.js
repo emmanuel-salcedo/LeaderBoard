@@ -1,36 +1,27 @@
-// backend/models/point.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../../config/database'); // Corrected path
+const sequelize = require('../config/database');
 const Church = require('./church');
 
 const Point = sequelize.define('Point', {
   description: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
+  },
+  date: {
+    type: DataTypes.DATE,
+    allowNull: false,
   },
   points: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
   ChurchId: {
     type: DataTypes.INTEGER,
     references: {
       model: Church,
-      key: 'id'
-    }
-  }
-});
-
-Point.afterCreate(async (point, options) => {
-  const church = await Church.findByPk(point.ChurchId);
-  church.totalPoints += point.points;
-  await church.save();
-});
-
-Point.afterDestroy(async (point, options) => {
-  const church = await Church.findByPk(point.ChurchId);
-  church.totalPoints -= point.points;
-  await church.save();
+      key: 'id',
+    },
+  },
 });
 
 Church.hasMany(Point, { foreignKey: 'ChurchId' });

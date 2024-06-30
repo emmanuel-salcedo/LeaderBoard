@@ -1,8 +1,8 @@
 // config/init.js
 const sequelize = require('./database');
-const League = require('../backend/models/league');
-const Church = require('../backend/models/church');
-const Point = require('../backend/models/point');
+const League = require('../server/models/league');
+const Church = require('../server/models/church');
+const Point = require('../server/models/point');
 
 async function initializeDatabase() {
     await sequelize.sync({ force: true });

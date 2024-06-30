@@ -1,24 +1,23 @@
-// backend/models/church.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../../config/database'); // Corrected path
+const sequelize = require('../config/database');
 const League = require('./league');
 
 const Church = sequelize.define('Church', {
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   totalPoints: {
     type: DataTypes.INTEGER,
-    defaultValue: 0
+    defaultValue: 0,
   },
   LeagueId: {
     type: DataTypes.INTEGER,
     references: {
       model: League,
-      key: 'id'
-    }
-  }
+      key: 'id',
+    },
+  },
 });
 
 League.hasMany(Church, { foreignKey: 'LeagueId' });
