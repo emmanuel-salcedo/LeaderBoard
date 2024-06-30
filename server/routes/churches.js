@@ -106,12 +106,17 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Update total points for all churches
+// Endpoint to update total points for all churches
 router.put('/updatePoints', async (req, res) => {
   try {
-    await updateAllTotalPoints();
-    res.json({ message: 'Total points updated for all churches' });
+    const churches = await Church.findAll();
+    for (const church of churches) {
+      const totalPoints = await Point.sum('points', { where: { ChurchId: church.id } });
+      await church.update({ totalPoints });
+    }
+    res.status(200).json({ message: 'Total points updated for all churches' });
   } catch (error) {
+    console.error('Error updating points:', error);
     res.status(500).json({ error: error.message });
   }
 });
