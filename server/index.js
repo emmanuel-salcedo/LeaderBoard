@@ -1,12 +1,12 @@
 const express = require('express');
 const path = require('path');
+const cors = require('cors');
 const { sequelize } = require('./models');
 const leagueRoutes = require('./routes/leagues');
 const churchRoutes = require('./routes/churches');
 const pointRoutes = require('./routes/points');
 
 const app = express();
-const cors = require('cors');
 
 app.use(cors());
 app.use(express.json());

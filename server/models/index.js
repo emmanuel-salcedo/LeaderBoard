@@ -1,17 +1,18 @@
 const sequelize = require('../config/database');
-const League = require('./league');
-const Church = require('./church');
-const Point = require('./point');
 
-League.hasMany(Church, { foreignKey: 'LeagueId' });
-Church.belongsTo(League, { foreignKey: 'LeagueId' });
-
-Church.hasMany(Point, { foreignKey: 'ChurchId' });
-Point.belongsTo(Church, { foreignKey: 'ChurchId' });
-
-module.exports = {
-  sequelize,
-  League,
-  Church,
-  Point
+const models = {
+  League: require('./league'),
+  Church: require('./church'),
+  Point: require('./point'),
 };
+
+Object.keys(models).forEach((modelName) => {
+  if (models[modelName].associate) {
+    models[modelName].associate(models);
+  }
+});
+
+models.sequelize = sequelize;
+models.Sequelize = Sequelize;
+
+module.exports = models;
