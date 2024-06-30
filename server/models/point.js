@@ -1,6 +1,7 @@
+// server/models/point.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database');
-const Church = require('./church'); // Ensure correct import path
+const Church = require('./church');
 
 const Point = sequelize.define('Point', {
   description: {
@@ -18,10 +19,13 @@ const Point = sequelize.define('Point', {
   ChurchId: {
     type: DataTypes.INTEGER,
     references: {
-      model: 'Churches', // Ensure correct table name
+      model: Church,
       key: 'id',
     },
   },
 });
+
+Church.hasMany(Point, { foreignKey: 'ChurchId' });
+Point.belongsTo(Church, { foreignKey: 'ChurchId' });
 
 module.exports = Point;

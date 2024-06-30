@@ -1,6 +1,6 @@
-//server/models/church.js
+// server/models/church.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../../config/database'); // Correct path
+const sequelize = require('../../config/database');
 const League = require('./league');
 
 const Church = sequelize.define('Church', {
