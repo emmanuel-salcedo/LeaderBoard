@@ -11,28 +11,17 @@ const updateTotalPoints = async (churchId) => {
 // Create a church
 router.post('/', async (req, res) => {
   try {
-    const { name, LeagueId } = req.body;
+    const church = await Church.create(req.body);
 
-    if (!name || !LeagueId) {
-      return res.status(400).json({ error: 'Name and LeagueId are required' });
-    }
-
-    const church = await Church.create({ name, LeagueId });
-
-    // Create initial point with value 0
-    await Point.create({
-      description: 'Initial Point',
-      date: new Date(),
-      points: 0,
-      ChurchId: church.id
-    });
+    // Create initial random points for the new church
+    const initialPoints = Math.floor(Math.random() * 100); // Random points between 0 and 99
+    await Point.create({ description: 'Initial Random Points', date: new Date(), points: initialPoints, ChurchId: church.id });
 
     // Update the total points for the church
     await updateTotalPoints(church.id);
 
     res.status(201).json(church);
   } catch (error) {
-    console.error('Error creating church:', error); // Log the error for debugging
     res.status(500).json({ error: error.message });
   }
 });
@@ -45,6 +34,7 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Church not found' });
     }
     await church.update(req.body);
+    await updateTotalPoints(church.id); // Ensure total points are updated
     res.json(church);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -99,6 +89,28 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Church not found' });
     }
     res.json(church);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Create a point
+router.post('/:churchId/points', async (req, res) => {
+  try {
+    const { churchId } = req.params;
+    const { description, points } = req.body;
+
+    const church = await Church.findByPk(churchId);
+    if (!church) {
+      return res.status(404).json({ error: 'Church not found' });
+    }
+
+    const point = await Point.create({ description, date: new Date(), points, ChurchId: churchId });
+
+    // Update the total points for the church
+    await updateTotalPoints(churchId);
+
+    res.status(201).json(point);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
