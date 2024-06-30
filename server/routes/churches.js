@@ -12,10 +12,12 @@ const updateTotalPoints = async (churchId) => {
 router.post('/', async (req, res) => {
   try {
     const church = await Church.create(req.body);
-    
-    // Create initial point with a random value
-    await Point.create({ description: 'Random Initial Point', date: new Date(), points: Math.floor(Math.random() * 100), ChurchId: church.id });
 
+    // Create random points for testing
+    for (let i = 0; i < 10; i++) {
+      await Point.create({ description: `Random Point ${i + 1}`, date: new Date(), points: Math.floor(Math.random() * 100), ChurchId: church.id });
+    }
+    
     // Update the total points for the church
     await updateTotalPoints(church.id);
 
@@ -33,10 +35,7 @@ router.put('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Church not found' });
     }
     await church.update(req.body);
-
-    // Update the total points for the church after edit
     await updateTotalPoints(church.id);
-
     res.json(church);
   } catch (error) {
     res.status(500).json({ error: error.message });
