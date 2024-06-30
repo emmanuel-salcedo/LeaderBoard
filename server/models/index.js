@@ -1,4 +1,4 @@
-const sequelize = require('../../config/database'); // Adjusted path to point correctly to database.js
+const sequelize = require('../../config/database'); // Correct path
 const Sequelize = require('sequelize');
 
 const models = {
