@@ -1,12 +1,16 @@
-// server/routes/churches.js
 const express = require('express');
 const { Church, Point, League } = require('../models');
 const router = express.Router();
 
 // Middleware to update total points
 const updateTotalPoints = async (churchId) => {
-  const points = await Point.sum('points', { where: { ChurchId: churchId } });
-  await Church.update({ totalPoints: points }, { where: { id: churchId } });
+  try {
+    const points = await Point.sum('points', { where: { ChurchId: churchId } });
+    await Church.update({ totalPoints: points || 0 }, { where: { id: churchId } });
+  } catch (error) {
+    console.error(`Error updating total points for church ${churchId}:`, error);
+    throw new Error(`Error updating total points for church ${churchId}`);
+  }
 };
 
 // Create a church
@@ -22,7 +26,6 @@ router.post('/', async (req, res) => {
     };
     await Point.create(initialPoint);
 
-    
     // Update the total points for the church
     await updateTotalPoints(church.id);
 
