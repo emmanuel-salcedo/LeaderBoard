@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
     }
 
     const church = await Church.create({ name, LeagueId });
-    
+
     // Create initial point with value 0
     await Point.create({
       description: 'Initial Point',
@@ -32,6 +32,7 @@ router.post('/', async (req, res) => {
 
     res.status(201).json(church);
   } catch (error) {
+    console.error('Error creating church:', error); // Log the error for debugging
     res.status(500).json({ error: error.message });
   }
 });
