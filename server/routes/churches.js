@@ -12,6 +12,13 @@ const updateTotalPoints = async (churchId) => {
 router.post('/', async (req, res) => {
   try {
     const church = await Church.create(req.body);
+    
+    // Create initial point with value 0
+    await Point.create({ description: 'Initial Point', date: new Date(), points: 0, ChurchId: church.id });
+
+    // Update the total points for the church
+    await updateTotalPoints(church.id);
+
     res.status(201).json(church);
   } catch (error) {
     res.status(500).json({ error: error.message });
