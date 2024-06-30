@@ -1,109 +1,379 @@
-# LigaEVG API Documentation
+# Leaderboard App Backend
 
-## Base URL
-`https://ligaevg-6917d6adeeb9.herokuapp.com`
+This is the backend for the Leaderboard App, a system for managing leagues, churches, and their points.
+
+## Table of Contents
+
+- [Project Description](#project-description)
+- [Technologies Used](#technologies-used)
+- [Setup and Installation](#setup-and-installation)
+- [Environment Variables](#environment-variables)
+- [Database Initialization](#database-initialization)
+- [Endpoints](#endpoints)
+  - [Leagues](#leagues)
+  - [Churches](#churches)
+  - [Points](#points)
+
+## Project Description
+
+The Leaderboard App allows users to manage leagues, churches, and points. It includes functionality for creating, reading, updating, and deleting these entities while keeping track of the total points for each church.
+
+## Technologies Used
+
+- Node.js
+- Express.js
+- Sequelize (ORM)
+- PostgreSQL
+
+## Setup and Installation
+
+1. Clone the repository:
+
+```sh
+git clone https://github.com/yourusername/leaderboard-app.git
+cd leaderboard-app
+```
+
+2. Install dependencies:
+
+```sh
+npm install
+```
+
+3. Set up the environment variables as described in the [Environment Variables](#environment-variables) section.
+
+4. Initialize the database:
+
+```sh
+node config/init.js
+```
+
+5. Start the server:
+
+```sh
+npm start
+```
+
+## Environment Variables
+
+Create a `.env` file in the root directory and add the following environment variables:
+
+```env
+DATABASE_URL=your_database_url
+```
+
+## Database Initialization
+
+To initialize the database with example data, run:
+
+```sh
+node config/init.js
+```
 
 ## Endpoints
 
 ### Leagues
 
 #### Create a League
-- **URL**: `/leagues`
-- **Method**: `POST`
-- **Body**: `{ "name": "League Name" }`
-- **Response**: `201 Created`, `{ "id": 1, "name": "League Name" }`
 
-#### Edit a League
-- **URL**: `/leagues/:id`
-- **Method**: `PUT`
-- **Body**: `{ "name": "New League Name" }`
-- **Response**: `200 OK`, `{ "id": 1, "name": "New League Name" }`
+- **URL:** `/leagues`
+- **Method:** `POST`
+- **Request Body:**
+  ```json
+  {
+    "name": "Premier League"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "name": "Premier League",
+    "createdAt": "2024-06-30T00:00:00.000Z",
+    "updatedAt": "2024-06-30T00:00:00.000Z"
+  }
+  ```
 
 #### Get All Leagues
-- **URL**: `/leagues`
-- **Method**: `GET`
-- **Response**: `200 OK`, `[ { "id": 1, "name": "League Name" }, ... ]`
+
+- **URL:** `/leagues`
+- **Method:** `GET`
+- **Response:**
+  ```json
+  [
+    {
+      "id": 1,
+      "name": "Premier League",
+      "createdAt": "2024-06-30T00:00:00.000Z",
+      "updatedAt": "2024-06-30T00:00:00.000Z"
+    }
+  ]
+  ```
 
 #### Get a League by ID
-- **URL**: `/leagues/:id`
-- **Method**: `GET`
-- **Response**: `200 OK`, `{ "id": 1, "name": "League Name" }`
+
+- **URL:** `/leagues/:id`
+- **Method:** `GET`
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "name": "Premier League",
+    "createdAt": "2024-06-30T00:00:00.000Z",
+    "updatedAt": "2024-06-30T00:00:00.000Z",
+    "Churches": [
+      {
+        "id": 1,
+        "name": "Church 1",
+        "totalPoints": 100,
+        "LeagueId": 1,
+        "createdAt": "2024-06-30T00:00:00.000Z",
+        "updatedAt": "2024-06-30T00:00:00.000Z"
+      }
+    ]
+  }
+  ```
+
+#### Update a League
+
+- **URL:** `/leagues/:id`
+- **Method:** `PUT`
+- **Request Body:**
+  ```json
+  {
+    "name": "Updated League Name"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "name": "Updated League Name",
+    "createdAt": "2024-06-30T00:00:00.000Z",
+    "updatedAt": "2024-06-30T00:00:00.000Z"
+  }
+  ```
 
 #### Delete a League
-- **URL**: `/leagues/:id`
-- **Method**: `DELETE`
-- **Response**: `204 No Content`
 
-#### Get All Churches in a League
-- **URL**: `/leagues/:id/churches`
-- **Method**: `GET`
-- **Response**: `200 OK`, `[ { "id": 1, "name": "Church Name", "totalPoints": 0, "LeagueId": 1 }, ... ]`
+- **URL:** `/leagues/:id`
+- **Method:** `DELETE`
+- **Response:**
+  ```json
+  {
+    "message": "League deleted successfully"
+  }
+  ```
 
 ### Churches
 
 #### Create a Church
-- **URL**: `/churches`
-- **Method**: `POST`
-- **Body**: `{ "name": "Church Name", "LeagueId": 1, "totalPoints": 0 }`
-- **Response**: `201 Created`, `{ "id": 1, "name": "Church Name", "totalPoints": 0, "LeagueId": 1 }`
 
-#### Edit a Church
-- **URL**: `/churches/:id`
-- **Method**: `PUT`
-- **Body**: `{ "name": "New Church Name", "LeagueId": 2 }`
-- **Response**: `200 OK`, `{ "id": 1, "name": "New Church Name", "totalPoints": 0, "LeagueId": 2 }`
+- **URL:** `/churches`
+- **Method:** `POST`
+- **Request Body:**
+  ```json
+  {
+    "name": "Church Alpha",
+    "LeagueId": 1
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "name": "Church Alpha",
+    "totalPoints": 0,
+    "LeagueId": 1,
+    "createdAt": "2024-06-30T00:00:00.000Z",
+    "updatedAt": "2024-06-30T00:00:00.000Z"
+  }
+  ```
+
+#### Get All Churches
+
+- **URL:** `/churches`
+- **Method:** `GET`
+- **Response:**
+  ```json
+  [
+    {
+      "id": 1,
+      "name": "Church Alpha",
+      "totalPoints": 0,
+      "LeagueId": 1,
+      "createdAt": "2024-06-30T00:00:00.000Z",
+      "updatedAt": "2024-06-30T00:00:00.000Z",
+      "Points": [
+        {
+          "id": 1,
+          "description": "Initial Point",
+          "date": "2024-06-30T00:00:00.000Z",
+          "points": 0,
+          "ChurchId": 1,
+          "createdAt": "2024-06-30T00:00:00.000Z",
+          "updatedAt": "2024-06-30T00:00:00.000Z"
+        }
+      ],
+      "League": {
+        "id": 1,
+        "name": "Premier League",
+        "createdAt": "2024-06-30T00:00:00.000Z",
+        "updatedAt": "2024-06-30T00:00:00.000Z"
+      }
+    }
+  ]
+  ```
+
+#### Get a Church by ID
+
+- **URL:** `/churches/:id`
+- **Method:** `GET`
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "name": "Church Alpha",
+    "totalPoints": 0,
+    "LeagueId": 1,
+    "createdAt": "2024-06-30T00:00:00.000Z",
+    "updatedAt": "2024-06-30T00:00:00.000Z",
+    "Points": [
+      {
+        "id": 1,
+        "description": "Initial Point",
+        "date": "2024-06-30T00:00:00.000Z",
+        "points": 0,
+        "ChurchId": 1,
+        "createdAt": "2024-06-30T00:00:00.000Z",
+        "updatedAt": "2024-06-30T00:00:00.000Z"
+      }
+    ],
+    "League": {
+      "id": 1,
+      "name": "Premier League",
+      "createdAt": "2024-06-30T00:00:00.000Z",
+      "updatedAt": "2024-06-30T00:00:00.000Z"
+    }
+  }
+  ```
+
+#### Update a Church
+
+- **URL:** `/churches/:id`
+- **Method:** `PUT`
+- **Request Body:**
+  ```json
+  {
+    "name": "Updated Church Name"
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "name": "Updated Church Name",
+    "totalPoints": 0,
+    "LeagueId": 1,
+    "createdAt": "2024-06-30T00:00:00.000Z",
+    "updatedAt": "2024-06-30T00:00:00.000Z"
+  }
+  ```
 
 #### Delete a Church
-- **URL**: `/churches/:id`
-- **Method**: `DELETE`
-- **Response**: `204 No Content`
 
-#### Get Church by ID
-- **URL**: `/churches/:id`
-- **Method**: `GET`
-- **Response**: `200 OK`, `{ "id": 1, "name": "Church Name", "totalPoints": 100, "LeagueId": 1, "Points": [ ... ], "League": { "id": 1, "name": "League Name" } }`
-
-#### Get Church Total Points
-- **URL**: `/churches/:id/points`
-- **Method**: `GET`
-- **Response**: `200 OK`, `{ "id": 1, "name": "Church Name", "totalPoints": 100, "LeagueId": 1, "Points": [ ... ] }`
-
-#### Get Church League
-- **URL**: `/churches/:id/league`
-- **Method**: `GET`
-- **Response**: `200 OK`, `{ "id": 1, "name": "Church Name", "League": { "id": 1, "name": "League Name" } }`
+- **URL:** `/churches/:id`
+- **Method:** `DELETE`
+- **Response:**
+  ```json
+  {
+    "message": "Church deleted successfully"
+  }
+  ```
 
 ### Points
 
 #### Create a Point
-- **URL**: `/points`
-- **Method**: `POST`
-- **Body**: `{ "description": "Good Deed", "date": "2024-06-30T00:00:00.000Z", "points": 10, "ChurchId": 1 }`
-- **Response**: `201 Created`, `{ "id": 1, "description": "Good Deed", "date": "2024-06-30T00:00:00.000Z", "points": 10, "ChurchId": 1 }`
 
-#### Delete a Point
-- **URL**: `/points/:id`
-- **Method**: `DELETE`
-- **Response**: `204 No Content`
+- **URL:** `/points`
+- **Method:** `POST`
+- **Request Body:**
+  ```json
+  {
+    "description": "New Point",
+    "date": "2024-06-30",
+    "points": 50,
+    "ChurchId": 1
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "description": "New Point",
+    "date": "2024-06-30",
+    "points": 50,
+    "ChurchId": 1,
+    "createdAt": "2024-06-30T00:00:00.000Z",
+    "updatedAt": "2024-06-30T00:00:00.000Z"
+  }
+  ```
+
+#### Get a Point by ID
+
+- **URL
+
+:** `/points/:id`
+- **Method:** `GET`
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "description": "New Point",
+    "date": "2024-06-30",
+    "points": 50,
+    "ChurchId": 1,
+    "createdAt": "2024-06-30T00:00:00.000Z",
+    "updatedAt": "2024-06-30T00:00:00.000Z"
+  }
+  ```
 
 #### Update a Point
-- **URL**: `/points/:id`
-- **Method**: `PUT`
-- **Body**: `{ "description": "New Description", "date": "2024-06-30T00:00:00.000Z", "points": 20 }`
-- **Response**: `200 OK`, `{ "id": 1, "description": "New Description", "date": "2024-06-30T00:00:00.000Z", "points": 20, "ChurchId": 1 }`
 
-### Server Setup
+- **URL:** `/points/:id`
+- **Method:** `PUT`
+- **Request Body:**
+  ```json
+  {
+    "description": "Updated Point",
+    "date": "2024-06-30",
+    "points": 75
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "id": 1,
+    "description": "Updated Point",
+    "date": "2024-06-30",
+    "points": 75,
+    "ChurchId": 1,
+    "createdAt": "2024-06-30T00:00:00.000Z",
+    "updatedAt": "2024-06-30T00:00:00.000Z"
+  }
+  ```
 
-#### `models/league.js`
-```javascript
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+#### Delete a Point
 
-const League = sequelize.define('League', {
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-});
+- **URL:** `/points/:id`
+- **Method:** `DELETE`
+- **Response:**
+  ```json
+  {
+    "message": "Point deleted successfully"
+  }
+  ```
 
-module.exports = League;
+## License
+
+This project is licensed under the MIT License.
