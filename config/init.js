@@ -30,15 +30,17 @@ async function initializeDatabase() {
 
         // Create random points for testing
         const pointsData = [];
-        for (let i = 0; i < 40; i++) {
-            const churchId = Math.floor(Math.random() * 6) + 1;
+        for (let j = 0; j < 40; j++) {
+            const pts = Math.floor(Math.random() * 6) + 1;
+        for (let i = 0; i < pts; i++) {
             pointsData.push({
                 description: `Random Point ${i + 1}`,
                 date: new Date(),
                 points: Math.floor(Math.random() * 100),
-                ChurchId: churchId,
+                ChurchId: j,
             });
         }
+    }
         await Point.bulkCreate(pointsData);
 
         // Additional churches for testing
