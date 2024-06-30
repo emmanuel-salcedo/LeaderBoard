@@ -2,12 +2,7 @@
 const express = require('express');
 const { Point, Church } = require('../models');
 const router = express.Router();
-
-// Middleware to update total points
-const updateTotalPoints = async (churchId) => {
-  const points = await Point.sum('points', { where: { ChurchId: churchId } });
-  await Church.update({ totalPoints: points }, { where: { id: churchId } });
-};
+const updateTotalPoints = require('../../utils/updateTotalPoints'); // Ensure this path is correct
 
 // Create a new point
 router.post('/', async (req, res) => {
