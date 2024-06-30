@@ -1,68 +1,47 @@
-// config/init.js
-const sequelize = require('./database');
+// init.js
+const sequelize = require('../config/database');
 const League = require('../server/models/league');
 const Church = require('../server/models/church');
 const Point = require('../server/models/point');
 
 async function initializeDatabase() {
-    try {
-        // Drop existing tables and recreate them
-        await sequelize.sync({ force: true });
+    // Drop and recreate tables
+    await sequelize.drop();
+    await sequelize.sync({ force: true });
 
-        console.log('Database synchronized!');
+    // Example data
+    const league1 = await League.create({ name: 'Premier League' });
+    const league2 = await League.create({ name: 'Championship League' });
 
-        // Create leagues
-        const league1 = await League.create({ name: 'Premier League' });
-        const league2 = await League.create({ name: 'La Liga' });
-        const league3 = await League.create({ name: 'Serie A' });
+    const church1 = await Church.create({ name: 'Church Alpha', LeagueId: league1.id });
+    const church2 = await Church.create({ name: 'Church Beta', LeagueId: league1.id });
+    const church3 = await Church.create({ name: 'Church Gamma', LeagueId: league2.id });
+    const church4 = await Church.create({ name: 'Church Delta', LeagueId: league2.id });
+    const church5 = await Church.create({ name: 'Church Epsilon', LeagueId: league1.id });
+    const church6 = await Church.create({ name: 'Church Zeta', LeagueId: league1.id });
+    const church7 = await Church.create({ name: 'Church Eta', LeagueId: league2.id });
+    const church8 = await Church.create({ name: 'Church Theta', LeagueId: league2.id });
+    const church9 = await Church.create({ name: 'Church Iota', LeagueId: league1.id });
+    const church10 = await Church.create({ name: 'Church Kappa', LeagueId: league2.id });
 
-        // Create churches for league1
-        const church1 = await Church.create({ name: 'Church 1', LeagueId: league1.id });
-        const church2 = await Church.create({ name: 'Church 2', LeagueId: league1.id });
+    const churches = [church1, church2, church3, church4, church5, church6, church7, church8, church9, church10];
 
-        // Create churches for league2
-        const church3 = await Church.create({ name: 'Church 3', LeagueId: league2.id });
-        const church4 = await Church.create({ name: 'Church 4', LeagueId: league2.id });
-
-        // Create churches for league3
-        const church5 = await Church.create({ name: 'Church 5', LeagueId: league3.id });
-        const church6 = await Church.create({ name: 'Church 6', LeagueId: league3.id });
-
-        // Create random points for testing
-        const pointsData = [];
-        for (let j = 0; j < 40; j++) {
-            const pts = Math.floor(Math.random() * 6) + 1;
-        for (let i = 0; i < pts; i++) {
-            pointsData.push({
-                description: `Random Point ${i + 1}`,
-                date: new Date(),
-                points: Math.floor(Math.random() * 100),
-                ChurchId: j,
-            });
-        }
+   // Generate random points for each church
+   for (const church of churches) {
+    const numberOfPoints = Math.floor(Math.random() * 50) + 1;
+    const pointsData = [];
+    for (let i = 0; i < numberOfPoints; i++) {
+        pointsData.push({
+            description: `Random Point ${i + 1}`,
+            date: new Date(),
+            points: Math.floor(Math.random() * 500) + 1,
+            ChurchId: church.id,
+        });
     }
-        await Point.bulkCreate(pointsData);
-
-        // Additional churches for testing
-        for (let i = 7; i <= 12; i++) {
-            const leagueId = Math.floor(Math.random() * 3) + 1;
-            await Church.create({ name: `Church ${i}`, LeagueId: leagueId });
-        }
-
-        // Recalculate total points for each church
-        for (let i = 1; i <= 12; i++) {
-            await updateTotalPoints(i);
-        }
-
-        console.log('Database initialized with example data!');
-    } catch (error) {
-        console.error('Error initializing database:', error);
-    }
+    await Point.bulkCreate(pointsData);
 }
 
-async function updateTotalPoints(churchId) {
-    const points = await Point.sum('points', { where: { ChurchId: churchId } });
-    await Church.update({ totalPoints: points }, { where: { id: churchId } });
+    console.log('Database initialized with example data!');
 }
 
 initializeDatabase().catch(error => {
