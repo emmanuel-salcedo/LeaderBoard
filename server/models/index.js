@@ -1,19 +1,20 @@
-const sequelize = require('../../config/database'); // Correct path
 const Sequelize = require('sequelize');
+const sequelize = require('../../config/database');
 
-const models = {
-  League: require('./league'),
-  Church: require('./church'),
-  Point: require('./point'),
+const League = require('./league');
+const Church = require('./church');
+const Point = require('./point');
+
+League.hasMany(Church, { foreignKey: 'LeagueId' });
+Church.belongsTo(League, { foreignKey: 'LeagueId' });
+
+Church.hasMany(Point, { foreignKey: 'ChurchId' });
+Point.belongsTo(Church, { foreignKey: 'ChurchId' });
+
+module.exports = {
+  sequelize,
+  Sequelize,
+  League,
+  Church,
+  Point,
 };
-
-Object.keys(models).forEach((modelName) => {
-  if (models[modelName].associate) {
-    models[modelName].associate(models);
-  }
-});
-
-models.sequelize = sequelize;
-models.Sequelize = Sequelize;
-
-module.exports = models;

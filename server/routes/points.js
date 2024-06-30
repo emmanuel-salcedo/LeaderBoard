@@ -1,11 +1,6 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('../../config/database'); // Correct path
-const express = require('express');
-const { Point } = require('../models');
-const { Church } = require('../models'); // Correct import
-
-const router = express.Router();
-
+const sequelize = require('../../config/database');
+const Church = require('./church'); // Ensure correct import
 
 const Point = sequelize.define('Point', {
   description: {
