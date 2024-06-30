@@ -11,10 +11,21 @@ const updateTotalPoints = async (churchId) => {
 // Create a church
 router.post('/', async (req, res) => {
   try {
-    const church = await Church.create(req.body);
+    const { name, LeagueId } = req.body;
+
+    if (!name || !LeagueId) {
+      return res.status(400).json({ error: 'Name and LeagueId are required' });
+    }
+
+    const church = await Church.create({ name, LeagueId });
     
     // Create initial point with value 0
-    await Point.create({ description: 'Initial Point', date: new Date(), points: 0, ChurchId: church.id });
+    await Point.create({
+      description: 'Initial Point',
+      date: new Date(),
+      points: 0,
+      ChurchId: church.id
+    });
 
     // Update the total points for the church
     await updateTotalPoints(church.id);
