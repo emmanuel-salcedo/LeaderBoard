@@ -1,3 +1,4 @@
+// backend/models/church.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/database'); // Corrected path
 const League = require('./league');

@@ -1,14 +1,14 @@
 const express = require('express');
 const path = require('path');
-const cors = require('cors'); // Import the CORS middleware
 const { sequelize } = require('./models');
 const leagueRoutes = require('./routes/leagues');
 const churchRoutes = require('./routes/churches');
 const pointRoutes = require('./routes/points');
+const cors = require('cors');
 
 const app = express();
 
-app.use(cors()); // Enable CORS for all routes
+app.use(cors());
 app.use(express.json());
 
 // API routes
@@ -30,7 +30,8 @@ app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
   try {
     await sequelize.authenticate();
-    console.log('Database connected!');
+    await sequelize.sync({ alter: true }); // This will update your database schema
+    console.log('Database connected and synced!');
   } catch (error) {
     console.error('Unable to connect to the database:', error);
   }
