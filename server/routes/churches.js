@@ -1,3 +1,4 @@
+//Churches.js
 const express = require('express');
 const { Church, Point, League } = require('../models');
 const router = express.Router();
@@ -41,6 +42,21 @@ router.delete('/:id', async (req, res) => {
     }
     await church.destroy();
     res.status(204).json({ message: 'Church deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get church by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const church = await Church.findByPk(req.params.id, {
+      include: [League, Point]
+    });
+    if (!church) {
+      return res.status(404).json({ error: 'Church not found' });
+    }
+    res.json(church);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

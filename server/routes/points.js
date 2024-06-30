@@ -1,3 +1,4 @@
+//points.js
 const express = require('express');
 const { Point, Church } = require('../models');
 const router = express.Router();

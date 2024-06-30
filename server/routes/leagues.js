@@ -1,3 +1,4 @@
+//Leagues.js
 const express = require('express');
 const { League, Church } = require('../models');
 const router = express.Router();
@@ -55,6 +56,21 @@ router.get('/:id/churches', async (req, res) => {
   try {
     const churches = await Church.findAll({ where: { LeagueId: req.params.id } });
     res.json(churches);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get league by ID
+router.get('/:id', async (req, res) => {
+  try {
+    const league = await League.findByPk(req.params.id, {
+      include: [{ model: Church }],
+    });
+    if (!league) {
+      return res.status(404).json({ error: 'League not found' });
+    }
+    res.json(league);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
