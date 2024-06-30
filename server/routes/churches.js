@@ -1,27 +1,27 @@
-//server/routes/churches.js
 const express = require('express');
-const { Church, Point, League } = require('../models');
+const { Church, Point } = require('../models');
 const router = express.Router();
 
-// Middleware to update total points
+// Middleware to update total points for a single church
 const updateTotalPoints = async (churchId) => {
   const points = await Point.sum('points', { where: { ChurchId: churchId } });
   await Church.update({ totalPoints: points }, { where: { id: churchId } });
+};
+
+// Middleware to update total points for all churches
+const updateAllTotalPoints = async () => {
+  const churches = await Church.findAll();
+  for (let church of churches) {
+    await updateTotalPoints(church.id);
+  }
 };
 
 // Create a church
 router.post('/', async (req, res) => {
   try {
     const church = await Church.create(req.body);
-
-    // Create random points for testing
-    for (let i = 0; i < 10; i++) {
-      await Point.create({ description: `Random Point ${i + 1}`, date: new Date(), points: Math.floor(Math.random() * 100), ChurchId: church.id });
-    }
-    
     // Update the total points for the church
     await updateTotalPoints(church.id);
-
     res.status(201).json(church);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -101,6 +101,16 @@ router.get('/', async (req, res) => {
   try {
     const churches = await Church.findAll({ include: [Point, League] });
     res.json(churches);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Update total points for all churches
+router.put('/updatePoints', async (req, res) => {
+  try {
+    await updateAllTotalPoints();
+    res.json({ message: 'Total points updated for all churches' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
