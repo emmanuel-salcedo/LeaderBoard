@@ -1,57 +1,57 @@
 const express = require('express');
 const { Church, Point, League } = require('../models');
-const updateTotalPoints = require('../utils/updateTotalPoints');
 const router = express.Router();
+
+// Middleware to update total points
+const updateTotalPoints = async (churchId) => {
+  const points = await Point.sum('points', { where: { ChurchId: churchId } });
+  await Church.update({ totalPoints: points }, { where: { id: churchId } });
+};
 
 // Create a church
 router.post('/', async (req, res) => {
   try {
     const church = await Church.create(req.body);
-    await Point.create({ description: 'Initial Points', date: new Date(), points: 0, ChurchId: church.id });
+    
+    // Create initial point with a random value
+    await Point.create({ description: 'Random Initial Point', date: new Date(), points: Math.floor(Math.random() * 100), ChurchId: church.id });
+
+    // Update the total points for the church
     await updateTotalPoints(church.id);
+
     res.status(201).json(church);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Create a point and update total points
-router.post('/points', async (req, res) => {
+// Edit a church
+router.put('/:id', async (req, res) => {
   try {
-    const point = await Point.create(req.body);
-    await updateTotalPoints(point.ChurchId);
-    res.status(201).json(point);
+    const church = await Church.findByPk(req.params.id);
+    if (!church) {
+      return res.status(404).json({ error: 'Church not found' });
+    }
+    await church.update(req.body);
+
+    // Update the total points for the church after edit
+    await updateTotalPoints(church.id);
+
+    res.json(church);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Edit a point and update total points
-router.put('/points/:id', async (req, res) => {
+// Delete a church
+router.delete('/:id', async (req, res) => {
   try {
-    const point = await Point.findByPk(req.params.id);
-    if (!point) {
-      return res.status(404).json({ error: 'Point not found' });
+    const church = await Church.findByPk(req.params.id);
+    if (!church) {
+      return res.status(404).json({ error: 'Church not found' });
     }
-    await point.update(req.body);
-    await updateTotalPoints(point.ChurchId);
-    res.json(point);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-// Delete a point and update total points
-router.delete('/points/:id', async (req, res) => {
-  try {
-    const point = await Point.findByPk(req.params.id);
-    if (!point) {
-      return res.status(404).json({ error: 'Point not found' });
-    }
-    const churchId = point.ChurchId;
-    await point.destroy();
-    await updateTotalPoints(churchId);
-    res.status(204).json({ message: 'Point deleted successfully' });
+    await church.destroy();
+    res.status(204).json({ message: 'Church deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -91,6 +91,16 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Church not found' });
     }
     res.json(church);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Get all churches
+router.get('/', async (req, res) => {
+  try {
+    const churches = await Church.findAll({ include: [Point, League] });
+    res.json(churches);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
