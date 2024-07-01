@@ -57,8 +57,9 @@ router.delete('/:id', async (req, res) => {
     if (!church) {
       return res.status(404).json({ error: 'Church not found' });
     }
+    await Point.destroy({ where: { ChurchId: church.id } });
     await church.destroy();
-    res.status(204).json({ message: 'Church deleted successfully' });
+    res.status(204).json({ message: 'Church and associated points deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

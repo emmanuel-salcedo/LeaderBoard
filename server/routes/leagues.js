@@ -1,6 +1,5 @@
-//server/routes/leagues.js
 const express = require('express');
-const { League, Church } = require('../models');
+const { League, Church, Point } = require('../models');
 const router = express.Router();
 
 // Create a league
@@ -44,8 +43,15 @@ router.delete('/:id', async (req, res) => {
     if (!league) {
       return res.status(404).json({ error: 'League not found' });
     }
+
+    const churches = await Church.findAll({ where: { LeagueId: league.id } });
+    for (const church of churches) {
+      await Point.destroy({ where: { ChurchId: church.id } });
+      await church.destroy();
+    }
+
     await league.destroy();
-    res.status(204).json({ message: 'League deleted successfully' });
+    res.status(204).json({ message: 'League and associated churches deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
